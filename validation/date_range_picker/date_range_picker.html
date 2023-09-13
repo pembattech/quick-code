@@ -52,17 +52,11 @@
   
   <label for="end_date">End Date:</label>
   <input type="date" id="end_date">
-  
-  <!-- Calendar container -->
-  <div id="calendar"></div>
 
   <script>
     // Get references to the date input fields
     const startDateInput = document.getElementById('start_date');
     const endDateInput = document.getElementById('end_date');
-
-    // Get reference to the calendar container
-    const calendar = document.getElementById('calendar');
 
     // Function to disable past dates in the date input fields
     function disablePastDates() {
@@ -88,22 +82,6 @@
         startDateInput.value = endDateInput.value;
       }
     }
-
-    // Show the calendar when either input field is clicked
-    startDateInput.addEventListener('click', () => {
-      calendar.style.display = 'block';
-    });
-
-    endDateInput.addEventListener('click', () => {
-      calendar.style.display = 'block';
-    });
-
-    // Hide the calendar when clicking outside of it
-    document.addEventListener('click', (event) => {
-      if (!calendar.contains(event.target) && event.target !== startDateInput && event.target !== endDateInput) {
-        calendar.style.display = 'none';
-      }
-    });
 
     // Initialize the calendar and set the end date min attribute based on start date
     disablePastDates();
