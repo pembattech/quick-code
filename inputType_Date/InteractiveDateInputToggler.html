@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Interactive Date Input Toggler</title>
+    <style>
+        /* Hide the date input initially */
+        .date-input {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-group">
+        <!-- Text input field -->
+        <input class="input-style text-input" type="text" id="projectStartDateText" name="start_date" 
+               placeholder="Start Date" value="">
+        <!-- Date input field (hidden by default) -->
+        <input class="input-style date-input" type="date" id="projectStartDateDate" name="start_date" 
+               value="">
+        <!-- Error message placeholder (if needed) -->
+        <span id="projectStartDate-error" class="error-message"></span>
+    </div>
+
+    <script>
+        // Get references to the text and date input fields
+        const textInput = document.getElementById('projectStartDateText');
+        const dateInput = document.getElementById('projectStartDateDate');
+
+        // Fetch the current date in YYYY-MM-DD format
+        const today = new Date();
+        const yyyy = today.getFullYear();
+        const mm = String(today.getMonth() + 1).padStart(2, '0'); // Add leading zero if needed
+        const dd = String(today.getDate()).padStart(2, '0'); // Add leading zero if needed
+        const currentDate = `${yyyy}-${mm}-${dd}`;
+
+        // Set the current date as the value of both text and date inputs
+        textInput.value = currentDate;
+        dateInput.value = currentDate;
+
+        // Add focus event listener to text input
+        textInput.addEventListener('focus', function () {
+            textInput.style.display = 'none'; // Hide text input
+            dateInput.style.display = 'block'; // Show date input
+            dateInput.focus(); // Set focus on date input
+        });
+
+        // Add blur event listener to date input
+        dateInput.addEventListener('blur', function () {
+            textInput.style.display = 'block'; // Show text input
+            dateInput.style.display = 'none'; // Hide date input
+            textInput.value = dateInput.value; // Copy date value to text input
+        });
+    </script>
+</body>
+</html>
+
