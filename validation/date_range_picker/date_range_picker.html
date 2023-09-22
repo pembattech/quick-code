@@ -1,103 +1,131 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-  <title>Date Range Picker</title>
-  <style>
-    /* Style for the date input fields */
-    input[type="date"] {
-      padding: 5px;
-      font-size: 16px;
-    }
+    <title>Date Range Picker</title>
+    <style>
+        /* Style for the date input fields */
+        input[type="date"] {
+            padding: 5px;
+            font-size: 16px;
+        }
 
-    /* Style for the calendar container */
-    #calendar {
-      display: none;
-      position: absolute;
-      z-index: 1;
-      background-color: #fff;
-      border: 1px solid #ccc;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-      padding: 10px;
-    }
+        /* Style for the calendar container */
+        #calendar {
+            display: none;
+            position: absolute;
+            z-index: 1;
+            background-color: #fff;
+            border: 1px solid #ccc;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+        }
 
-    /* Style for the calendar table */
-    #calendar table {
-      width: 100%;
-      border-collapse: collapse;
-    }
+        /* Style for the calendar table */
+        #calendar table {
+            width: 100%;
+            border-collapse: collapse;
+        }
 
-    /* Style for the calendar header row */
-    #calendar th {
-      text-align: center;
-      padding: 5px;
-      background-color: #f2f2f2;
-    }
+        /* Style for the calendar header row */
+        #calendar th {
+            text-align: center;
+            padding: 5px;
+            background-color: #f2f2f2;
+        }
 
-    /* Style for the calendar cells */
-    #calendar td {
-      text-align: center;
-      padding: 5px;
-      cursor: pointer;
-    }
+        /* Style for the calendar cells */
+        #calendar td {
+            text-align: center;
+            padding: 5px;
+            cursor: pointer;
+        }
 
-    /* Highlight today's date */
-    #calendar td.today {
-      background-color: #e0e0e0;
-    }
-  </style>
+        /* Highlight today's date */
+        #calendar td.today {
+            background-color: #e0e0e0;
+        }
+    </style>
 </head>
+
 <body>
-  <label for="start_date">Start Date:</label>
-  <input type="date" id="start_date">
-  
-  <label for="end_date">End Date:</label>
-  <input type="date" id="end_date">
+    <label for="start_date">Start Date:</label>
+    <input type="date" id="start_date">
 
-  <script>
-    // Get references to the date input fields
-    const startDateInput = document.getElementById('start_date');
-    const endDateInput = document.getElementById('end_date');
+    <label for="end_date">End Date:</label>
+    <input type="date" id="end_date">
 
-    // Function to disable past dates in the date input fields
-    function disablePastDates() {
-      const today = new Date().toISOString().split('T')[0]; // Get today's date in YYYY-MM-DD format
-      startDateInput.setAttribute('min', today);
-      endDateInput.setAttribute('min', today);
-    }
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Initialize the date range picker when the document is ready
+        $(document).ready(function () {
+            initializeDateRangePicker('#start_date', '#end_date');
+        });
 
-    // Function to update the minimum date for the end date input based on the start date
-    function updateEndDateMin() {
-      const startDate = new Date(startDateInput.value);
-      endDateInput.setAttribute('min', startDateInput.value);
-      if (endDateInput.value && new Date(endDateInput.value) < startDate) {
-        endDateInput.value = startDateInput.value;
-      }
-    }
+        function initializeDateRangePicker(startDateField, endDateField) {
+            // Get references to the date input fields
+            const startDateInput = $(startDateField);
+            const endDateInput = $(endDateField);
 
-    // Function to update the maximum date for the start date input based on the end date
-    function updateStartDateMax() {
-      const endDate = new Date(endDateInput.value);
-      startDateInput.setAttribute('max', endDateInput.value);
-      if (startDateInput.value && new Date(startDateInput.value) > endDate) {
-        startDateInput.value = endDateInput.value;
-      }
-    }
+            // Function to format a date as "yyyy-mm-dd"
+            function formatDate(date) {
+                const year = date.getFullYear();
+                const month = String(date.getMonth() + 1).padStart(2, '0'); // Add leading zero if needed
+                const day = String(date.getDate()).padStart(2, '0'); // Add leading zero if needed
+                return `${year}-${month}-${day}`;
+            }
 
-    // Initialize the calendar and set the end date min attribute based on start date
-    disablePastDates();
-    updateEndDateMin();
-    updateStartDateMax();
+            // Function to disable past dates in the date input fields
+            function disablePastDates() {
+                const today = new Date();
+                const formattedToday = formatDate(today); // Format today's date
+                $(startDateInput).attr('min', formattedToday);
+                $(endDateInput).attr('min', formattedToday);
+            }
 
-    // Listen for changes in the start date and end date and update attributes accordingly
-    startDateInput.addEventListener('change', () => {
-      updateEndDateMin();
-      updateStartDateMax();
-    });
+            // Function to update the minimum date for the end date input based on the start date
+            function updateEndDateMin() {
+                const startDateValue = $(startDateInput).val();
+                if (startDateValue) {
+                    const startDate = new Date(startDateValue);
+                    const formattedStartDate = formatDate(startDate); // Format start date
+                    $(endDateInput).attr('min', formattedStartDate);
+                    if ($(endDateInput).val() && new Date($(endDateInput).val()) < startDate) {
+                        $(endDateInput).val(formattedStartDate);
+                    }
+                }
+            }
 
-    endDateInput.addEventListener('change', () => {
-      updateEndDateMin();
-      updateStartDateMax();
-    });
-  </script>
+            // Function to update the maximum date for the start date input based on the end date
+            function updateStartDateMax() {
+                const endDate = new Date($(endDateInput).val());
+                const formattedEndDate = formatDate(endDate); // Format end date
+                $(startDateInput).attr('max', formattedEndDate);
+                if ($(startDateInput).val() && new Date($(startDateInput).val()) > endDate) {
+                    $(startDateInput).val(formattedEndDate);
+                }
+            }
+
+            // Initialize the calendar and set the end date min attribute based on start date
+            disablePastDates();
+            updateEndDateMin();
+            updateStartDateMax();
+
+            // Listen for changes in the start date and end date and update attributes accordingly
+            $(startDateInput).on('change', function () {
+                updateEndDateMin();
+                updateStartDateMax();
+            });
+
+            $(endDateInput).on('change', function () {
+                updateStartDateMax();
+                updateEndDateMin();
+            });
+
+        }
+
+
+    </script>
 </body>
+
 </html>
