@@ -1,0 +1,66 @@
+# add_product.html
+{% extends 'base.html' %}
+
+{% block content %}
+  <h2>Add Product</h2>
+
+  <form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.as_p }}
+    
+    {% if form.errors %}
+        <ul>
+            {% for error in form.errors %}
+                <li>{{ error }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    
+    <h3>Product Gallery</h3>
+    <div id="gallery-formset">
+      {{ formset.management_form }}
+      {% for subform in formset.forms %}
+        {{ subform.as_p }}
+        {% if subform.errors %}
+            <ul>
+                {% for error in subform.errors %}
+                    <li>{{ error }}</li>
+                {% endfor %}
+            </ul>
+        {% endif %}
+      {% endfor %}
+    </div>
+    
+    <button type="button" id="add-gallery-form">Add Gallery Image</button>
+    
+    <input type="submit" value="Save Product">
+  </form>
+
+  <script>
+    document.addEventListener("DOMContentLoaded", function () {
+      const formsetContainer = document.getElementById("gallery-formset");
+      const addButton = document.getElementById("add-gallery-form");
+  
+      addButton.addEventListener("click", function () {
+        const formCountInput = document.getElementById("id_productgallery_set-TOTAL_FORMS");
+        const formCount = parseInt(formCountInput.value);
+  
+        const newFormHtml = `
+          <div>
+            <label for="id_productgallery_set-${formCount}-image">Image:</label>
+            <input type="file" name="productgallery_set-${formCount}-image" accept="image/*" id="id_productgallery_set-${formCount}-image">
+          </div>
+          <div>
+            <label for="id_productgallery_set-${formCount}-DELETE">Delete:</label>
+            <input type="checkbox" name="productgallery_set-${formCount}-DELETE" id="id_productgallery_set-${formCount}-DELETE">
+            <input type="hidden" name="productgallery_set-${formCount}-id" id="id_productgallery_set-${formCount}-id">
+            <input type="hidden" name="productgallery_set-${formCount}-product" value="{{ form.instance.id }}" id="id_productgallery_set-${formCount}-product">
+          </div>`;
+  
+        formsetContainer.insertAdjacentHTML("beforeend", newFormHtml);
+        formCountInput.value = formCount + 1;
+      });
+    });
+  </script>
+  
+{% endblock %}
